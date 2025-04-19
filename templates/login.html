@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Sudoku Guru{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to continue to SudoGuru</p>
+        
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter password">
+                <label style="display: inline-block; margin-top: 5px;">
+                    <input type="checkbox" onclick="togglePassword()"> Show Password
+                  </label>
+                </div>
+            
+            <button type="submit" class="auth-button">Sign In</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+            <p><a href="{{ url_for('forgot_password_page') }}">Forgot Password?</a></p>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h2>How Backtracking Works</h2>
+        <p>Backtracking is a general algorithm for finding solutions to constraint satisfaction problems, such as Sudoku. The algorithm incrementally builds candidates for solutions and abandons a candidate as soon as it is determined that it cannot lead to a valid solution.</p>
+
+        <h3>Steps of the Backtracking Algorithm:</h3>
+        <ol>
+            <li>Find an empty cell in the Sudoku grid.</li>
+            <li>Try placing numbers 1 to 9 in the empty cell.</li>
+            <li>For each number, check if placing it violates Sudoku rules (i.e., no duplicates in the row, column, or 3x3 grid).</li>
+            <li>If a number is valid, place it and recursively attempt to fill the next empty cell.</li>
+            <li>If placing a number leads to a solution, return true. If not, reset the cell and try the next number.</li>
+            <li>If no numbers are valid, backtrack to the previous cell and try the next number there.</li>
+        </ol>
+
+        <h2>Puzzle Generation Dataset</h2>
+        <p>The puzzles used in SudoGuru are sourced from a comprehensive dataset available on Kaggle, which contains over 4 million Sudoku puzzles ranging from easy to hard difficulty levels. This dataset allows for a diverse selection of puzzles to challenge users of all skill levels.</p>
+        <p>For more information, visit the dataset page: <a href="https://www.kaggle.com/datasets/informoney/4-million-sudoku-puzzles-easytohard/data" target="_blank">Kaggle Sudoku Dataset</a>.</p>
+    </div>
+</div>
+
+<!-- Modal for OTP Request -->
+<div id="otpModal" style="display:none;">
+    <h2>Request OTP</h2>
+    <form id="otpForm">
+        <label for="otpEmail">Enter your email:</label>
+        <input type="email" id="otpEmail" name="otpEmail" required>
+        <button type="submit">Send OTP</button>
+    </form>
+    <p id="otpMessage"></p>
+</div>
+
+<script>
+    document.getElementById('forgot-password').addEventListener('click', function() {
+        document.getElementById('otpModal').style.display = 'block'; // Show the OTP request modal
+    });
+
+    document.getElementById('otpForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const email = document.getElementById('otpEmail').value;
+
+        fetch('/api/request_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('otpMessage').innerText = data.message || data.error;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('otpVerificationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const email = document.getElementById('otpEmail').value; // Get the email from the previous modal
+        const otp = document.getElementById('otp').value;
+
+        fetch('/api/verify_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, otp })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('otpVerificationMessage').innerText = data.message || data.error;
+            if (data.message) {
+                localStorage.setItem('otpEmail', email); // Store the email in local storage
+                window.location.href = '/reset_password'; // Redirect to the reset password page
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+          } else {
+            passwordInput.type = "password";
+          }
+        }
+</script>
+{% endblock %}

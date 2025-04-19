@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}User Page - {{ user.username }}{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ user.username }}!</h1>
+
+<div class="user-info">
+    <h2>User Information</h2>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Puzzles Solved:</strong></p>
+    <ul>
+        <li>Easy: {{ user.easy_solved }}</li>
+        <li>Medium: {{ user.medium_solved }}</li>
+        <li>Hard: {{ user.hard_solved }}</li>
+    </ul>
+    <!-- Add more user-related information as needed -->
+</div>
+
+<div class="user-actions">
+    <h2>Your Actions</h2>
+    <ul>
+        <li><a href="{{ url_for('generator') }}">Play Sudoku!</a></li>
+        <li><a href="{{ url_for('solver') }}">Solve Sudoku Puzzle</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %} 

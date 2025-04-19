@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Play Sudoku!{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles_generator.css') }}">
+
+<h1>Play Sudoku!</h1>
+<div class="timer">
+    <h2>Timer: <span id="timer">00:00</span></h2>
+</div>
+<div class="container">
+    
+    <div class="sudoku-container">
+        <div class="sudoku-board">
+            {% for i in range(9) %}
+                {% for j in range(9) %}
+                    <input type="text" name="cell-{{ i }}-{{ j }}" class="cell {% if (i, j) in invalid_positions %}invalid-cell{% endif %}" 
+                        value="{{ user_inputs[i][j] if user_inputs[i][j] != '' else grid[i][j] }}" 
+                        onclick="selectCell(this)" 
+                        autocomplete="off"
+                        maxlength="1"
+                        style="color: {% if user_inputs[i][j] != '' %}blue{% else %}{{ colors[i][j] }}{% endif %};"
+                        {% if grid[i][j] != '' %} readonly {% endif %}
+                        oninput="this.value = this.value.replace(/[^1-9]/g, ''); checkIfSolved()">
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="keypad">
+            <div class="keypad-buttons">
+                {% for num in range(1, 10) %}
+                    <button type="button" class="keypad-button" onclick="enterNumber({{ num }})">{{ num }}</button>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+    <div class="difficulty-container">
+        <label for="difficulty-select">Select Difficulty:</label>
+        <select id="difficulty-select">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+    </div>
+    <div class="button-container">
+        <button type="button" name="generate" class="generate-button" onclick="generatePuzzle(event)">GENERATE</button>
+        <button type="button" id="pause-button" class="solve-buttons" onclick="togglePause()">PAUSE</button>
+        <button type="button" name="clear" class="solve-buttons" onclick="clearPuzzle()">CLEAR</button>
+        <button type="button" name="hint" class="solve-buttons" onclick="getHint()">HINT</button>
+        <button type="button" name="export" class="solve-buttons">EXPORT</button>
+    </div>    
+</div>
+
+<div id="completionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Congratulations!</h2>
+        <p>You solved the puzzle in <span id="completionTime"></span>!</p>
+        <p>Would you like to play another puzzle?</p>
+        <button onclick="location.reload();">Play Again</button>
+    </div>
+</div>
+
+<script src="/static/scripts.js"></script>
+<script>
+function showCompletionModal(time) {
+    document.getElementById('completionTime').innerText = time;
+    document.getElementById('completionModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('completionModal').style.display = 'none';
+}
+</script>
+{% endblock %}

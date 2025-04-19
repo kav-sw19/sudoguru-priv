@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SudoGuru{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles_solver.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles_generator.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="navbar-list">
+            <li class="navbar-item"><a href="{{ url_for('home') }}" class="navbar-link {% if request.endpoint == 'home' %}active{% endif %}">SudoGuru</a></li>
+            <li class="navbar-item"><a href="{{ url_for('solver') }}" class="navbar-link {% if request.endpoint == 'solver' %}active{% endif %}">Sudoku Solver</a></li>
+            <li class="navbar-item"><a href="{{ url_for('generator') }}" class="navbar-link {% if request.endpoint == 'generator' %}active{% endif %}">Play Sudoku!</a></li>
+        </ul>
+        <ul class="navbar-list navbar-right">
+            {% if 'user_id' in session %}
+                <li class="navbar-item username"><a href="{{ url_for('user_page', user_id=session['user_id']) }}">{{ session['username'] }}</a></li>
+                <li class="navbar-item"><a href="{{ url_for('logout') }}" class="navbar-link">Logout</a></li>
+            {% else %}
+                <li class="navbar-item"><a href="{{ url_for('register') }}" class="navbar-link">Register</a></li>
+                <li class="navbar-item"><a href="{{ url_for('login') }}" class="navbar-link">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

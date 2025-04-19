@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP - Sudoku Guru{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Verify OTP</h1>
+        <p class="auth-subtitle">Enter the OTP sent to your email.</p>
+
+        <form id="otpVerificationForm">
+            <div class="form-group">
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" required>
+            </div>
+
+            <button type="submit" class="auth-button">Verify OTP</button>
+        </form>
+
+        <p id="otpVerificationMessage"></p>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email'); // Get the email from the URL
+
+    document.getElementById('otpVerificationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const otp = document.getElementById('otp').value;
+
+        fetch('/api/verify_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, otp })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('otpVerificationMessage').innerText = data.message || data.error;
+            if (data.message) {
+                // Redirect to reset password page
+                window.location.href = '/reset_password?email=' + encodeURIComponent(email);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %} 

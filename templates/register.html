@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Sudoku Guru{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Create Account</h1>
+        <p class="auth-subtitle">Join SudoGuru to start solving puzzles</p>
+        
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username" maxlength="10">
+                <small class="form-hint">Maximum 10 characters</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="auth-button">Create Account</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a></p>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h2>About Sudoku</h2>
+        <p>Sudoku is a logic-based, combinatorial number-placement puzzle. The objective is to fill a 9×9 grid with digits so that each column, each row, and each of the nine 3×3 subgrids that compose the grid (also called "boxes", "blocks", or "regions") contain all of the digits from 1 to 9.</p>
+
+        <h3>Basic Rules</h3>
+        <ul>
+            <li>Each number 1-9 must appear exactly once in each row.</li>
+            <li>Each number 1-9 must appear exactly once in each column.</li>
+            <li>Each number 1-9 must appear exactly once in each 3x3 grid.</li>
+        </ul>
+
+        <h3>Solving Strategies</h3>
+        <h4>1. Naked Singles</h4>
+        <p>If a cell can only contain one possible number, that number must go in that cell.</p>
+
+        <h4>2. Hidden Singles</h4>
+        <p>If a number can only go in one cell within a row, column, or box, it must go there, even if other candidates are present in that cell.</p>
+
+        <h4>3. Naked Pairs</h4>
+        <p>If two cells in a unit (row, column, or box) contain the same two candidates, those candidates can be removed from other cells in that unit.</p>
+
+        <h4>4. X-Wing</h4>
+        <p>This technique involves finding two rows (or columns) that contain a candidate in only two cells. If these cells align in a rectangle, the candidate can be eliminated from other cells in those rows (or columns).</p>
+
+        <h3>Tips for Beginners</h3>
+        <ul>
+            <li>Start with the easiest puzzles to build confidence.</li>
+            <li>Look for rows, columns, and boxes that are nearly complete.</li>
+            <li>Practice regularly to improve your skills.</li>
+        </ul>
+
+        <p>For more strategies and tips, visit <a href="https://www.sudokuwiki.org" target="_blank">SudokuWiki</a> or <a href="https://sudoku.com" target="_blank">Sudoku.com</a>.</p>
+    </div>
+</div>
+
+{% endblock %}
