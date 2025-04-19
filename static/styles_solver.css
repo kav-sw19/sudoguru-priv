@@ -1,0 +1,148 @@
+.cell.user-input {
+    color: black !important;
+}
+
+.cell.solved {
+    color: black;
+}
+
+.invalid-digit {
+    color: red !important;
+}
+
+/* Ensure invalid digits are always red, even with user-input class */
+.cell.user-input.invalid-digit {
+    color: red !important;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-around; /* Evenly space buttons */
+    width: 100%; /* Full width under the board */
+    margin-top: 20px;
+}
+
+.solve-buttons {
+    flex: none; /* Allow buttons to grow and fill space */
+    margin: 0 5px; /* Small margin between buttons */
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #387ec4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.solve-buttons:hover {
+    background-color: #214b75;
+}
+
+.solve-buttons:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    color: #a9a9a9;
+}
+
+.solve-buttons:disabled:hover {
+    background-color: #d3d3d3;
+}
+
+/* Styles for the import text box */
+.import-textbox {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding for comfort */
+    margin: 10px 0; /* Margin for spacing */
+    border: 2px solid #007BFF; /* Blue border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Styles for the import button */
+.import-button {
+    background-color: #007BFF; /* Blue background */
+    color: white; /* White text */
+    padding: 10px 15px; /* Padding */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.import-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Styles for the modal (if you decide to keep it) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe; /* White background */
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Error message styles */
+.error-messages {
+    color: red; /* Red color for error messages */
+    font-weight: bold;
+    margin-top: 10px; /* Margin for spacing */
+}
+
+
+/* Sub-grid bordering */
+.cell:nth-child(3n) {
+    border-right: 2px solid #000; /* Thicker right border for every 3rd column */
+}
+
+/* Sub-grid bordering for rows */
+.cell:nth-child(27n+19),
+.cell:nth-child(27n+20),
+.cell:nth-child(27n+21),
+.cell:nth-child(27n+22),
+.cell:nth-child(27n+23),
+.cell:nth-child(27n+24),
+.cell:nth-child(27n+25),
+.cell:nth-child(27n+26),
+.cell:nth-child(27n+27) {
+    border-bottom: 2px solid #000; /* Thicker bottom border for every 3rd row */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .cell {
+        font-size: 1.5em; /* Adjust font size for mobile */
+    }
+}

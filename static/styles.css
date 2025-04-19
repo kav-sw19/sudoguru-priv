@@ -1,0 +1,387 @@
+h1 {
+    color: #126cba;
+    font-size: 48px;
+    text-align: center;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e4e4e4;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+
+.sudoku-container {
+    display: flex;
+}
+
+.sudoku-board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 2px;
+    width: 90vw;
+    max-width: 600px;
+    margin: auto;
+    border: 4px solid #000;
+    margin-right: 20px;
+}
+
+.cell {
+    width: 100%;
+    height: 0;
+    position: relative;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* Center text horizontally */
+
+}
+
+/* Sub-grid bordering */
+.cell:nth-child(3n) {
+    border-right: 2px solid #000;
+}
+
+/* Sub-grid bordering for rows */
+/* may have to find a more efficient way */
+.cell:nth-child(27n+19),
+.cell:nth-child(27n+20),
+.cell:nth-child(27n+21),
+.cell:nth-child(27n+22),
+.cell:nth-child(27n+23),
+.cell:nth-child(27n+24),
+.cell:nth-child(27n+25),
+.cell:nth-child(27n+26),
+.cell:nth-child(27n+27) {
+    border-bottom: 2px solid #000;
+}
+
+/* Keypad styles */
+.keypad {
+    display: flex;
+    align-items: center; 
+    margin-left: 10%;
+}
+
+.keypad-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 300px;
+    height: 300px; 
+    border: 2px solid #e1e2e2; 
+}
+
+.keypad-button {
+    /* Make buttons fill the keypad area */
+    width: 100%; 
+    height: 100%; 
+    font-size: 38px;
+    cursor: pointer;
+    background-color: #387ec4;
+    color: white;
+    border: 1px solid #161616;
+    transition: background-color 0.3s;
+}
+
+.keypad-button:hover {
+    background-color: #214b75; 
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Places items at opposite ends */
+    color: #fff;
+    width: 69%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.solve-buttons {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #387ec4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.solve-buttons:hover {
+    background-color: #214b75;
+}
+
+.solve-buttons:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    color: #a9a9a9;
+}
+
+.solve-buttons:disabled:hover {
+    background-color: #d3d3d3;
+}
+
+.generate-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.generate-button:hover {
+    background-color: #218838;
+}
+
+.error-messages {
+    color: #e74c3c;
+    margin-top: 10px; 
+    text-align: center; 
+}
+
+.pencil-button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50%
+}
+
+.pencil-button {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pencil-button:hover {
+    background-color: #f0f0f0;
+}
+
+.pencil-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.navbar {
+    position: fixed;
+    display: flex;
+    top: 0;
+    width: 100%;
+    background-color: #387ec4;
+    color: white;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.navbar-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-item {
+    margin: 0 15px;
+}
+
+.navbar-link {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.navbar-link:hover {
+    color: #ddd;
+}
+
+.navbar-link.active {
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-right {
+    margin-left: auto; /* Pushes the right list to the right */
+}
+
+/* Style for the username in the navbar */
+.navbar-item.username {
+    color: black; 
+}
+
+/* Export Popup Styles */
+.export-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.export-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.export-content h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.export-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.export-content .copy-message {
+    color: #4CAF50;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.export-content button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.export-content button:hover {
+    background-color: #45a049;
+}
+
+/* Add this to your CSS file */
+.navbar a {
+    text-decoration: none; /* Remove underline from all links in the navbar */
+    color: black; /* Set link color to black */
+    font-weight: bold; /* Make the link text bold */
+}
+
+.navbar a:hover {
+    text-decoration: underline; /* Optional: Add underline on hover */
+}
+
+.container {
+    max-width: 1200px; /* Maximum width for larger screens */
+    margin: auto;
+    padding: 20px;
+}
+
+/* Styles for mobile devices */
+@media (max-width: 768px) {
+    .sudoku-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for mobile */
+    }
+
+    .cell {
+        width: 100%; /* Full width for each cell */
+        height: 50px; /* Adjust height for mobile */
+        font-size: 1.5em; /* Larger font size for better readability */
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px; /* Space between buttons */
+    }
+
+    /* Adjust borders for mobile if necessary */
+    .cell:nth-child(3n) {
+        border-right: 1px solid #000; /* Thinner right border for mobile */
+    }
+
+    .cell:nth-child(27n+19),
+    .cell:nth-child(27n+20),
+    .cell:nth-child(27n+21),
+    .cell:nth-child(27n+22),
+    .cell:nth-child(27n+23),
+    .cell:nth-child(27n+24),
+    .cell:nth-child(27n+25),
+    .cell:nth-child(27n+26),
+    .cell:nth-child(27n+27) {
+        border-bottom: 1px solid #000; /* Thinner bottom border for mobile */
+    }
+
+    .cell input {
+        font-size: 1.5em; /* Adjust font size for input on mobile */
+    }
+}
+
+/* Styles for tablets and larger devices */
+@media (min-width: 769px) {
+    .sudoku-board {
+        display: grid;
+        grid-template-columns: repeat(9, 1fr); /* 9 columns for desktop */
+    }
+
+    .cell {
+        width: 100%; /* Full width for each cell */
+        height: 60px; /* Adjust height for desktop */
+        font-size: 2em; /* Larger font size for better readability */
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: row; /* Align buttons horizontally */
+        gap: 20px; /* Space between buttons */
+    }
+
+    /* Maintain thicker borders for desktop */
+    .cell:nth-child(3n) {
+        border-right: 2px solid #000; /* Thicker right border for every 3rd column */
+    }
+
+    .cell:nth-child(27n+19),
+    .cell:nth-child(27n+20),
+    .cell:nth-child(27n+21),
+    .cell:nth-child(27n+22),
+    .cell:nth-child(27n+23),
+    .cell:nth-child(27n+24),
+    .cell:nth-child(27n+25),
+    .cell:nth-child(27n+26),
+    .cell:nth-child(27n+27) {
+        border-bottom: 2px solid #000; /* Thicker bottom border for every 3rd row */
+    }
+
+    .cell input {
+        font-size: 2em; /* Font size for input on larger screens */
+    }
+}
+
+
+

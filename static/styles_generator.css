@@ -1,0 +1,32 @@
+.cell.user-input {
+    color: blue !important;
+}
+
+.cell.selected {
+    background-color: #1a68a3 !important; /* Darker blue for the selected cell */
+}
+
+.cell.highlight {
+    background-color: #d0e0f0; /* Light blue for the row, column, and subgrid */
+}
+
+.invalid-digit {
+    color: red !important;
+}
+
+/* Ensure invalid digits are always red, even with user-input class */
+.cell.user-input.invalid-digit {
+    color: red !important;
+}
+
+/* Add this to your CSS file */
+.blur {
+    filter: blur(5px);
+    pointer-events: none; /* Disable interactions */
+}
+
+.pencil-mode {
+    color: gray; /* Change text color for pencil marks */
+    font-size: 0.8em; /* Smaller font size for pencil marks */
+    font-style: italic; /* Italicize pencil marks */
+}

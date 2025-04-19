@@ -1,0 +1,192 @@
+/* Styles for forms */
+.form-container {
+    max-width: 400px; /* Limit the width of the form */
+    margin: 0 auto; /* Center the form */
+    padding: 20px;
+    background-color: #fff; /* White background for the form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Space between form fields */
+}
+
+.form-group label {
+    display: block; /* Make labels block elements */
+    margin-bottom: 5px; /* Space between label and input */
+    font-weight: bold; /* Bold labels */
+}
+
+.form-group input {
+    width: 100%; /* Full width inputs */
+    padding: 10px; /* Padding inside inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size for inputs */
+}
+
+.form-group input:focus {
+    border-color: #387ec4; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+.submit-button {
+    width: 100%; /* Full width button */
+    padding: 10px; /* Padding inside button */
+    background-color: #387ec4; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 18px; /* Font size for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.submit-button:hover {
+    background-color: #214b75; /* Darker color on hover */
+}
+
+.error-message {
+    color: #e74c3c; /* Red color for error messages */
+    margin-top: 10px; /* Space above error messages */
+    text-align: center; /* Center error messages */
+}
+
+.auth-container {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: flex-start; /* Align items at the start */
+    padding: 20px;
+}
+
+.auth-box {
+    flex: 1; /* Allow the registration box to take up space */
+    margin-right: 40px; /* Increase space between the registration box and info box */
+    margin-left: 0; /* Remove any left margin to move it more to the left */
+}
+
+.info-box {
+    flex: 1; /* Allow the info box to take up space */
+    background-color: #f9f9f9; /* Light background for contrast */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.info-box h2, .info-box h3 {
+    color: #333; /* Darker color for headings */
+}
+
+.info-box p, .info-box ul {
+    color: #555; /* Darker color for text */
+}
+
+.auth-box h1 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.auth-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.form-hint {
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.auth-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.auth-button:hover {
+    background-color: #45a049;
+}
+
+.auth-links {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.auth-links a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border: 1px solid #ffcdd2;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 30px 20px;
+    }
+
+    .auth-box h1 {
+        font-size: 20px;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+    }
+}
+

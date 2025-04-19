@@ -1,0 +1,110 @@
+.cell.user-input {
+    color: black !important;
+}
+
+.cell.selected {
+    background-color: #1a68a3 !important; /* Darker blue for the selected cell */
+}
+
+.cell.highlight {
+    background-color: #d0e0f0 ;/* Light blue for the row, column, and subgrid */
+}
+
+.invalid-digit {
+    color: red !important;
+}
+
+/* Ensure invalid digits are always red, even with user-input class */
+.cell.user-input.invalid-digit {
+    color: red !important;
+}
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Input field styles */
+.cell input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    height: 90%;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-size: 2em;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    line-height: 1.2;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+
+.button-container {
+    display: flex;
+    justify-content: space-around; /* Evenly space buttons */
+    width: 70%; 
+    margin-top: 20px;
+}
+
+.solve-buttons {
+    flex: none; /* Allow buttons to grow and fill space */
+    margin: 0 5px; /* Small margin between buttons */
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #387ec4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.solve-buttons:hover {
+    background-color: #214b75;
+}
+
+.solve-buttons:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    color: #a9a9a9;
+}
+
+.solve-buttons:disabled:hover {
+    background-color: #d3d3d3;
+}
+
+.import-button {
+    flex: none; /* Allow buttons to grow and fill space */
+    margin: 0 5px; /* Small margin between buttons */
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.import-button:hover {
+    background-color: #218838;
+}
+
+.pencil-button.selected {
+    border: 2px solid blue;
+}
+
+#description {
+    display: none; 
+    margin-top: 20px; 
+    padding: 15px; 
+    background-color: #f9f9f9; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
