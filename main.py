@@ -85,8 +85,10 @@ class users(db.Model):
         """Check if the provided password matches the stored hashed password."""
         return check_password_hash(self.password, password)
         
-db.create_all()
-
+# push context manually to app
+with app.app_context():
+    db.create_all()
+    
 # For database checking    
 @app.route("/view")
 def view():
@@ -646,6 +648,7 @@ def reset_password():
         return jsonify({'message': 'Your password has been reset successfully.'}), 200
     else:
         return jsonify({'error': 'User not found.'}), 404
+        
 
 if __name__ == '__main__':
     app.run(debug=False)
