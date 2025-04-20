@@ -506,18 +506,15 @@ def clear_puzzle():
     empty_grid = [['' for _ in range(9)] for _ in range(9)]
     return jsonify({'grid': empty_grid})
 
-@app.route('/user/<int:user_id>')
-@login_required
-def user_page(user_id):
+@app.route('/user/<string:username>')
+@login_required  # Protect this route
+def user_page(username):
     """Render the user page for the logged-in user."""
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
+    user = users.query.filter_by(username=username).first()  # Fetch user by username
+    if not user or session['user_id'] != user.id:  # Check if user exists and matches logged-in user
+        return "Access denied: You can only view your own user page.", 403  # Return a 403 Forbidden error
 
-    user = users.query.get(user_id)
-    if not user:
-        return "User not found", 404
-
-    return render_template('user_page.html', user=user)
+    return render_template('user_page.html', user=user)  # Pass user object to the template
 
 @app.route('/save_user_input', methods=['POST'])
 def save_user_input():

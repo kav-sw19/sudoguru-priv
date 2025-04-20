@@ -17,7 +17,7 @@
         </ul>
         <ul class="navbar-list navbar-right">
             {% if 'user_id' in session %}
-                <li class="navbar-item username"><a href="{{ url_for('user_page', user_id=session['user_id']) }}">{{ session['username'] }}</a></li>
+                <li class="navbar-item username"><a href="{{ url_for('user_page', username=session['username']) }}">{{ session['username'] }}</a></li>
                 <li class="navbar-item"><a href="{{ url_for('logout') }}" class="navbar-link">Logout</a></li>
             {% else %}
                 <li class="navbar-item"><a href="{{ url_for('register') }}" class="navbar-link">Register</a></li>
