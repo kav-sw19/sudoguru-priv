@@ -88,6 +88,7 @@ class users(db.Model):
         
 # push context manually to app
 with app.app_context():
+    db.drop_all()    
     db.create_all()
     
 # For database checking    
