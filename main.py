@@ -42,7 +42,8 @@ load_puzzles()  # Load puzzles at startup
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  
 app.permanent_session_lifetime = timedelta(minutes=5)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.sqlite3"
+#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.sqlite3"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
@@ -174,7 +175,7 @@ def solve(grid, row=0, col=0):
     if col == 9:
         if row == 8:  # If at last cell, puzzle is solved
             return True
-        row += 1
+        row += 1                                                                                                                                
         col = 0
 
     # Skip cells that are already filled and move to the next cell
@@ -505,6 +506,7 @@ def clear_puzzle():
     return jsonify({'grid': empty_grid})
 
 @app.route('/user/<int:user_id>')
+@login_required
 def user_page(user_id):
     """Render the user page for the logged-in user."""
     if 'user_id' not in session:
