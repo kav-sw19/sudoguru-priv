@@ -76,8 +76,8 @@ class users(db.Model):
     easy_solved = db.Column(db.Integer, default=0)  # Counter for easy puzzles solved
     medium_solved = db.Column(db.Integer, default=0)  # Counter for medium puzzles solved
     hard_solved = db.Column(db.Integer, default=0)  # Counter for hard puzzles solved
-    current_puzzle_time = db.Column(db.Integer, default=0)  # Store elapsed time in seconds
-    last_generation_time = db.Column(db.DateTime, nullable=True)  # Store last generation time
+    #current_puzzle_time = db.Column(db.Integer, default=0)  # Store elapsed time in seconds
+    #last_generation_time = db.Column(db.DateTime, nullable=True)  # Store last generation time
 
     def __init__(self, email, username, password):
         self.email = email
@@ -90,6 +90,7 @@ class users(db.Model):
 
 # push context manually to app
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 # For database checking    
