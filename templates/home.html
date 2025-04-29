@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Sudoku Solver{% endblock %}
+{% block title %}SudoGuru{% endblock %}
 
 {% block content %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles_guru.css') }}">
 
     <h1> SudoGuru </h1>
-    {% if session['id'] %}
-            <p>User: {{ session['username'] }}</p>
+    {% if 'id' in session %}
+        <p>User: {{ session['username'] }}</p>
     {% endif %}
+
     <div class="container">
         <form method="POST" action="/">
             <div class="sudoku-container">
@@ -32,9 +31,10 @@
                             <button type="button" class="keypad-button" onclick="enterNumber({{ num }})">{{ num }}</button>
                         {% endfor %}
                     </div>
+                    
                 </div>
             </div>
-            <div class="difficulty-container"></div>
+            <div class="difficulty-container">
                 <label for="difficulty-select">Select Difficulty:</label>
                 <select id="difficulty-select">
                     <option value="easy">Easy</option>
@@ -57,8 +57,7 @@
             {% endif %}
         
     </div>
-
-    <div id="importModal" class="modal"></div>
+    <div id="importModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Import Sudoku Puzzle</h2>
@@ -68,7 +67,7 @@
             </form>
         </div>
     </div>
-
-    <script src="/static/scripts.js"></script>
     
+    <script src="/static/scripts.js"></script>
+
 {% endblock %}

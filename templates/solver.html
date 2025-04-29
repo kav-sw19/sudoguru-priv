@@ -22,6 +22,14 @@
                     {% endfor %}
                 {% endfor %}
             </div>
+            <div class="keypad">
+                <div class="keypad-buttons">
+                    {% for num in range(1, 10) %}
+                        <button type="button" class="keypad-button" onclick="enterNumber({{ num }})">{{ num }}</button>
+                    {% endfor %}
+                </div>
+                
+            </div>
             
         </div>
         <div class="button-container">

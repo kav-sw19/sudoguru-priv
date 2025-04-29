@@ -40,8 +40,8 @@ load_puzzles()  # Load puzzles at startup
 
 ### FLASK AND DATABASE SETUP
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)  
-app.permanent_session_lifetime = timedelta(minutes=5)
+app.secret_key = os.environ.get('SECRET_KEY')
+app.permanent_session_lifetime = timedelta(minutes=30)
 #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.sqlite3"
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -87,11 +87,11 @@ class users(db.Model):
     def check_password(self, password):
         """Check if the provided password matches the stored hashed password."""
         return check_password_hash(self.password, password)
-    
+
 # push context manually to app
 with app.app_context():
     db.create_all()
-  
+
 # For database checking    
 @app.route("/view")
 def view():

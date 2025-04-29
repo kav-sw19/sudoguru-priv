@@ -23,6 +23,7 @@
         <li><a href="{{ url_for('generator') }}">Play Sudoku!</a></li>
         <li><a href="{{ url_for('solver') }}">Solve Sudoku Puzzle</a></li>
         <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        <li><a href="{{ url_for('change_password', username=user.username) }}">Reset Password</a></li>
     </ul>
 </div>
 {% endblock %} 
