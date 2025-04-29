@@ -68,7 +68,7 @@ class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     generator_grid = db.Column(db.Text, default='')  # Store generated grid as a string
     user_grid = db.Column(db.Text, default='')  # Store user-modified grid as a string
     home_grid = db.Column(db.Text, default='')  # Store home grid as JSON string

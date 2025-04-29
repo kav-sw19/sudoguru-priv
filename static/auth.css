@@ -123,7 +123,7 @@
 
 .form-group input:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #126cba;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
 }
 
@@ -134,7 +134,7 @@
 }
 
 .auth-button {
-    background-color: #4CAF50;
+    background-color: #126cba;
     color: white;
     padding: 12px;
     border: none;
@@ -146,7 +146,7 @@
 }
 
 .auth-button:hover {
-    background-color: #45a049;
+    background-color: #1273c7;
 }
 
 .auth-links {
@@ -156,7 +156,7 @@
 }
 
 .auth-links a {
-    color: #4CAF50;
+    color: #126cba;
     text-decoration: none;
     font-weight: 500;
 }
