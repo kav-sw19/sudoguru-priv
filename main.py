@@ -68,7 +68,7 @@ class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(10), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)
+    password = db.Column(db.String(120), nullable=False)
     generator_grid = db.Column(db.Text, default='')  # Store generated grid as a string
     user_grid = db.Column(db.Text, default='')  # Store user-modified grid as a string
     home_grid = db.Column(db.Text, default='')  # Store home grid as JSON string
@@ -76,6 +76,8 @@ class users(db.Model):
     easy_solved = db.Column(db.Integer, default=0)  # Counter for easy puzzles solved
     medium_solved = db.Column(db.Integer, default=0)  # Counter for medium puzzles solved
     hard_solved = db.Column(db.Integer, default=0)  # Counter for hard puzzles solved
+    current_puzzle_time = db.Column(db.Integer, default=0)  # Store elapsed time in seconds
+    last_generation_time = db.Column(db.DateTime, nullable=True)  # Store last generation time
 
     def __init__(self, email, username, password):
         self.email = email
@@ -85,7 +87,7 @@ class users(db.Model):
     def check_password(self, password):
         """Check if the provided password matches the stored hashed password."""
         return check_password_hash(self.password, password)
-        
+    
 # push context manually to app
 with app.app_context():
     db.drop_all()    
@@ -111,9 +113,10 @@ def register():
         return redirect(url_for('home'))
     
     if request.method == 'POST':
-        email = request.form.get('email')
-        username = request.form.get('username')
-        password = request.form.get('password')
+        data = request.get_json()
+        email = data.get('email')
+        username = data.get('username')
+        password = data.get('password')
 
         if not all([email, username, password]):
             return render_template('register.html', error="All fields are required.")
@@ -122,16 +125,65 @@ def register():
         if existing_user:
             return render_template('register.html', error="Email already registered.")
 
-        new_user = users(email=email, username=username, password=password)
-        db.session.add(new_user)
-        db.session.commit()
+        # Generate and store OTP
+        otp = random.randint(100000, 999999)
+        otp_storage[email] = {
+            'otp': otp,
+            'expires': time.time() + 300  # 5 minutes from now
+        }
 
-        return redirect(url_for('login'))
+        # Send OTP via email
+        try:
+            msg = Message("Your OTP Code", recipients=[email])
+            msg.body = f"Your OTP code is: {otp}. It will expire in 5 minutes."
+            mail.send(msg)
+            return jsonify({'message': 'OTP sent to your email. Please verify.'}), 200
+        except Exception as e:
+            return jsonify({'error': 'Failed to send OTP.'}), 500
 
     return render_template('register.html')
 
+@app.route('/register_otp', methods=['GET', 'POST'])
+def register_otp():
+    if request.method == 'GET':
+        email = request.args.get('email')
+        username = request.args.get('username')
+        password = request.args.get('password')
+        return render_template('register_otp.html', email=email, username=username, password=password)
+
+    data = request.get_json()
+    email = data.get('email')
+    entered_otp = data.get('otp')
+    username = data.get('username')
+    password = data.get('password')
+
+    if email in otp_storage:
+        stored_otp = otp_storage[email]['otp']
+        expires = otp_storage[email]['expires']
+
+        if time.time() < expires and int(entered_otp) == stored_otp:
+            # Create the new user after successful OTP verification
+            new_user = users(
+                email=email,
+                username=username,
+                password=password  
+            )
+            db.session.add(new_user)
+            db.session.commit()  # Commit the new user to the database
+            
+            del otp_storage[email]  # Remove the OTP after successful registration
+            
+            return jsonify({'message': 'Registration successful! Please log in.'}), 200
+        else:
+            return jsonify({'error': 'Invalid or expired OTP.'}), 400
+    else:
+        return jsonify({'error': 'No OTP request found for this email.'}), 400
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user_id' in session:
+        return redirect(url_for('home'))
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -146,11 +198,17 @@ def login():
 
     return render_template('login.html')  # Render the login page
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
+@login_required
 def logout():
-    session.pop('user_id', None)
-    session.pop('username', None)
-    return redirect(url_for('home'))
+    data = request.get_json()  # Get the JSON data from the request
+    user = users.query.get(session['user_id'])
+    if user:
+        user.current_puzzle_time = data.get('time', 0)  # Save the current timer state
+        db.session.commit()  # Commit the changes to the database
+    session.pop('user_id', None)  # Clear the user ID from the session
+    session.pop('username', None)  # Clear the username from the session
+    return jsonify({'message': 'Logged out successfully.'}), 200  # Return a success message
 
 ### SOLVER/GENERATOR LOGIC
 def is_valid_move(grid, row, col, number):
@@ -176,7 +234,7 @@ def solve(grid, row=0, col=0):
     if col == 9:
         if row == 8:  # If at last cell, puzzle is solved
             return True
-        row += 1                                                                                                                                
+        row += 1
         col = 0
 
     # Skip cells that are already filled and move to the next cell
@@ -259,13 +317,17 @@ def home():
 
         if 'generate' in request.form:
             try:
+                difficulty = request.form.get('difficulty', 'easy')  # Get selected difficulty
+
+                if not puzzles[difficulty]:
+                    return jsonify({'error': 'No puzzles available for the selected difficulty.'}), 500
                 # Generate a random puzzle from the CSV file
-                random_puzzle = random.choice(puzzles['easy'])  # Randomly select a puzzle
+                random_puzzle = random.choice(puzzles[difficulty])  # Randomly select a puzzle
                 grid = [[int(num) if num != '0' else '' for num in random_puzzle[i:i+9]] for i in range(0, 81, 9)]
                 # Store the generated grid in database
                 user.home_grid = str(grid)
                 db.session.commit()
-                return jsonify({'grid': grid})  # Return the generated grid as JSON
+                return jsonify({'grid': grid, 'generation_time': user.last_generation_time}), 200  # Return the generated grid and time
             except Exception as e:
                 print(f"Error generating puzzle: {e}")  # Log the error
                 return jsonify({'error': 'Failed to generate puzzle'}), 500
@@ -366,7 +428,11 @@ hints_used = 0
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
 def generator():
-    user = users.query.get(session['user_id'])
+    user = users.query.get(session['user_id'])  # Get the current user
+    if user is None:
+        return redirect(url_for('login'))  # Redirect to login if user is not found
+
+    db.session.commit()
     
     # Initialize grid, user inputs, colors, and read-only status
     grid = [['' for _ in range(9)] for _ in range(9)]  # Default empty grid
@@ -406,6 +472,8 @@ def generator():
 
         if 'generate' in request.form:
             difficulty = request.form.get('difficulty', 'easy')  # Get selected difficulty
+            user.current_puzzle_time = 0
+
             if not puzzles[difficulty]:
                 return jsonify({'error': 'No puzzles available for the selected difficulty.'}), 500
             
@@ -415,8 +483,8 @@ def generator():
             
             # Save the generated grid to the database
             if user:
-                user.generator_grid = str(grid)  # Save the generated grid
-                db.session.commit()  # Commit changes to the database
+                user.generator_grid = str(grid)
+                db.session.commit()
 
             # Prepare colors for the grid
             colors = [['black' if cell != '' else 'blue' for cell in row] for row in grid]
@@ -429,7 +497,8 @@ def generator():
                 'grid': grid,
                 'user_inputs': user_inputs,
                 'colors': colors,
-                'read_only': read_only  # Set read-only status
+                'read_only': read_only,  # Set read-only status
+                'generation_time': user.last_generation_time  # Return generation time
             })
 
     return render_template('generator.html', grid=grid, user_inputs=user_inputs, colors=colors, read_only=read_only)
@@ -507,14 +576,15 @@ def clear_puzzle():
     return jsonify({'grid': empty_grid})
 
 @app.route('/user/<string:username>')
-@login_required  # Protect this route
+@login_required
 def user_page(username):
     """Render the user page for the logged-in user."""
     user = users.query.filter_by(username=username).first()  # Fetch user by username
+
     if not user or session['user_id'] != user.id:  # Check if user exists and matches logged-in user
         return "Access denied: You can only view your own user page.", 403  # Return a 403 Forbidden error
 
-    return render_template('user_page.html', user=user)  # Pass user object to the template
+    return render_template('user_page.html', user=user)
 
 @app.route('/save_user_input', methods=['POST'])
 def save_user_input():
@@ -648,7 +718,48 @@ def reset_password():
         return jsonify({'message': 'Your password has been reset successfully.'}), 200
     else:
         return jsonify({'error': 'User not found.'}), 404
-        
+
+@app.route('/save_puzzle_time', methods=['POST'])
+@login_required
+def save_puzzle_time():
+    data = request.get_json()
+    user = users.query.get(session['user_id'])
+    user.current_puzzle_time = data['time']  # Update the user's current puzzle time
+    db.session.commit()
+    return jsonify({'message': 'Puzzle time saved successfully.'}), 200
+
+@app.route('/get_puzzle_time', methods=['GET'])
+@login_required
+def get_puzzle_time():
+    user = users.query.get(session['user_id'])
+    return jsonify({'time': user.current_puzzle_time}), 200
+
+@app.route('/change_password/<string:username>', methods=['GET', 'POST'])
+@login_required
+def change_password(username):
+    user = users.query.filter_by(username=username).first()
+
+    if not user or session['user_id'] != user.id:
+        return "Access denied: You can only reset your own password.", 403
+
+    if request.method == 'POST':
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+
+        if not user.check_password(old_password):
+            flash("Old password is incorrect.", "error")
+            return render_template('change_password.html', user=user)
+
+        # Update the password with the new hashed one
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+
+        flash("Password updated successfully. Please log in again.", "success")
+        session.clear()  # Log out the user after password change
+        return redirect(url_for('login'))
+
+    return render_template('change_password.html', user=user)
+
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

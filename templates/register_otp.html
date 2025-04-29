@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP - Sudoku Guru{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Verify OTP</h1>
+        <p class="auth-subtitle">An OTP has been sent to your email. Please enter it below.</p>
+        <p id="otpTimer">OTP expires in <span id="countdown">300</span> seconds.</p>
+
+        <form id="otpVerificationForm">
+            <input type="hidden" id="email" value="{{ email }}">
+            <input type="hidden" id="username" value="{{ username }}">
+            <input type="hidden" id="password" value="{{ password }}">
+            <div class="form-group">
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" required>
+            </div>
+
+            <button type="submit" class="auth-button">Verify OTP</button>
+            <button type="button" class="auth-button" onclick="window.location.href='{{ url_for('register') }}'">Back to Registration</button>
+        </form>
+
+        <p id="otpVerificationMessage"></p>
+    </div>
+</div>
+
+<script>
+    // Function to get URL parameters
+    function getQueryParams() {
+        const params = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return params;
+    }
+
+    // Set the hidden input fields with the URL parameters
+    const params = getQueryParams();
+    document.getElementById('email').value = params.email;
+    document.getElementById('username').value = params.username;
+    document.getElementById('password').value = params.password;
+    // Countdown timer for OTP expiration
+    let countdown = 300; // 5 minutes in seconds
+    const countdownElement = document.getElementById('countdown');
+
+    const timer = setInterval(() => {
+        countdown--;
+        countdownElement.innerText = countdown;
+        if (countdown <= 0) {
+            clearInterval(timer);
+            document.getElementById('otpVerificationMessage').innerText = "OTP has expired. Please request a new one.";
+            document.getElementById('otpVerificationForm').style.display = 'none'; // Hide the form
+        }
+    }, 1000);
+
+    document.getElementById('otpVerificationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const email = document.getElementById('email').value;
+        const otp = document.getElementById('otp').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('/register_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, otp, username, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('otpVerificationMessage').innerText = data.message || data.error;
+            if (data.message) {
+                // Redirect to login page after successful registration
+                setTimeout(() => {
+                    window.location.href = '/login'; // Redirect to login page
+                }, 1350); // Redirect after 1.35s
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}

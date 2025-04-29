@@ -32,13 +32,22 @@
                             <button type="button" class="keypad-button" onclick="enterNumber({{ num }})">{{ num }}</button>
                         {% endfor %}
                     </div>
-                    
                 </div>
+            </div>
+            <div class="difficulty-container"></div>
+                <label for="difficulty-select">Select Difficulty:</label>
+                <select id="difficulty-select">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
             </div>
             <div class="button-container">
                 <button type="submit" name="solve" class="solve-buttons">SOLVE</button>
                 <button type="submit" name="clear" class="solve-buttons">CLEAR</button>
                 <button type="button" name="generate" class="generate-button" onclick="generateHomePuzzle(event)">GENERATE</button>
+                <button type="button" class="import-button">IMPORT</button>
+                <button type="button" name="export" class="solve-buttons">EXPORT</button>
             </div>    
         </form>
         
@@ -47,6 +56,17 @@
                 <div class="error-messages">{{ warning }}</div>
             {% endif %}
         
+    </div>
+
+    <div id="importModal" class="modal"></div>
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Import Sudoku Puzzle</h2>
+            <form id="importForm">
+                <textarea id="sudokuInput" rows="1" cols="81" placeholder="Enter 81-digit line..."></textarea>
+                <button type="button" onclick="submitImport()">Submit</button>
+            </form>
+        </div>
     </div>
 
     <script src="/static/scripts.js"></script>
