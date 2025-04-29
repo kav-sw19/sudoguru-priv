@@ -2,7 +2,6 @@
 let selectedCell = null;
 let pencilMode = false; // Track whether pencil mode is enabled
 let lastSelectedCell = null; // Track the last selected cell
-let isPaused = false; // Track the pause state
 let isPencilMode = false; // Track the pencil mode state
 
 function selectCell(cell) {
@@ -615,45 +614,63 @@ function getHint() {
 
 // TIMER
 let timerInterval;
-let seconds = 0;
+let seconds = 0; // Time in seconds
+let isPaused = false; // Track the paused state
 
-// Function to load the timer state from local storage
+// Function to load the timer state from the server
 function loadTimerState() {
-    const savedTime = localStorage.getItem('elapsedTime');
-    if (savedTime) {
-        seconds = parseInt(savedTime, 10);
-    }
+    fetch('/get_puzzle_time')
+        .then(response => response.json())
+        .then(data => {
+            seconds = data.time; // Set seconds from the server
+            updateTimerDisplay(); // Update the timer display
+        })
+        .catch(error => {
+            console.error('Error loading timer state:', error);
+        });
 }
 
-// Function to save the timer state to local storage
+// Function to save the timer state to the server
 function saveTimerState() {
-    localStorage.setItem('elapsedTime', seconds);
+    fetch('/save_puzzle_time', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ time: seconds })
+    })
+    .catch(error => {
+        console.error('Error saving timer state:', error);
+    });
+}
+
+// Function to update the timer display
+function updateTimerDisplay() {
+    const minutes = Math.floor(seconds / 60);
+    const displaySeconds = seconds % 60;
+    document.getElementById('timer').innerText = 
+        `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
 }
 
 // Function to start the timer
 function startTimer() {
-    loadTimerState(); // Load the timer state from local storage
+    clearInterval(timerInterval); // Prevent duplicate intervals
     timerInterval = setInterval(() => {
         seconds++;
-        saveTimerState(); // Save the timer state to local storage
-        const minutes = Math.floor(seconds / 60);
-        const displaySeconds = seconds % 60;
-        document.getElementById('timer').innerText = 
-            `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+        updateTimerDisplay();
     }, 1000);
 }
 
 // Function to pause the timer
 function pauseTimer() {
-    clearInterval(timerInterval);
+    clearInterval(timerInterval); // Stop the timer
 }
 
 // Function to reset the timer (only when generating a new puzzle)
 function resetTimer() {
     clearInterval(timerInterval);
     seconds = 0; // Reset seconds to 0
-    document.getElementById('timer').innerText = '00:00';
-    localStorage.removeItem('elapsedTime'); // Clear the saved time
+    updateTimerDisplay(); // Update the display to 00:00
     startTimer(); // Start the timer again
 }
 
@@ -690,7 +707,8 @@ function checkIfSolved() {
         })
         .catch(error => console.error('Error:', error));
 
-        localStorage.removeItem('elapsedTime'); // Clear the saved time upon solving
+        // Save the elapsed time when the puzzle is solved
+        saveTimerState(); // Save the time upon solving
 
         // Disable all input fields
         inputs.forEach(input => {
@@ -716,46 +734,51 @@ function isValid(value) {
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         pauseTimer(); // Pause the timer when the page is not visible
+        saveTimerState(); // Save the timer state when the page is hidden
     } else {
         startTimer(); // Resume the timer when the page is visible again
     }
 });
 
-// Call startTimer when the page loads
-window.onload = startTimer;
+// Event listener for navigation away from the generator page
+window.addEventListener('beforeunload', () => {
+    pauseTimer(); // Pause the timer when the user navigates away
+    saveTimerState(); // Save the timer state when navigating away
+});
 
+window.onload = () => {
+    loadTimerState(); // Load the saved timer state from the server
+    startTimer();     // Then start the timer
+};
+
+
+// Function to toggle pause and resume
 function togglePause() {
-    const board = document.getElementById('sudoku-board');
     const pauseButton = document.getElementById('pause-button');
-
+    const board = document.getElementById('sudoku-container');
+    const pauseOverlay = document.getElementById('pause-overlay');  
     if (isPaused) {
-        // Resume the game
-        isPaused = false;
-        pauseButton.textContent = 'PAUSE'; // Change button text
-        board.classList.remove('blur'); // Remove blur effect
-        enableBoard(); // Enable board interactions
+        // Resume the timer
+        startTimer(); // Start the timer
+        isPaused = false; // Set the paused state to false
+        pauseButton.textContent = 'PAUSE'; // Change button text to "PAUSE"
+        document.getElementById('timer').classList.remove('paused'); // Remove the pause indication
+        board.classList.remove('paused');
+        pauseOverlay.style.display = 'none';
     } else {
-        // Pause the game
-        isPaused = true;
-        pauseButton.textContent = 'RESUME'; // Change button text
-        board.classList.add('blur'); // Add blur effect
-        disableBoard(); // Disable board interactions
+        // Pause the timer
+        pauseTimer(); // Pause the timer
+        isPaused = true; // Set the paused state to true
+        pauseButton.textContent = 'RESUME'; // Change button text to "RESUME"
+        document.getElementById('timer').classList.add('paused'); // Add a class to visually indicate pause
+        board.classList.add('paused');
+        pauseOverlay.style.display = 'block';
     }
 }
 
-function disableBoard() {
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach(cell => {
-        cell.readOnly = true; // Disable input
-    });
-}
+// Event listener for the pause button
+document.getElementById('pause-button').addEventListener('click', togglePause);
 
-function enableBoard() {
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach(cell => {
-        cell.readOnly = false; // Enable input
-    });
-}
 
 // Function to save user input via AJAX
 function saveUserInput(cellName, value) {
@@ -866,3 +889,28 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+
+// Function to handle logout
+function logout() {
+    // Save the current timer state before logging out
+    saveTimerState(); // Ensure the timer state is saved
+
+    // Send a request to log out
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ time: seconds }) // Send the current timer value
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/login'; // Redirect to login page
+        } else {
+            console.error('Logout failed:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+    });
+}

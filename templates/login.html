@@ -3,6 +3,16 @@
 {% block title %}Login - Sudoku Guru{% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
 <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
 
 <div class="auth-container">

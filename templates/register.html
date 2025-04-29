@@ -16,7 +16,7 @@
         </div>
         {% endif %}
 
-        <form method="POST" class="auth-form">
+        <form method="POST" class="auth-form" id="registerForm">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required autocomplete="email">
@@ -75,5 +75,36 @@
         <p>For more strategies and tips, visit <a href="https://www.sudokuwiki.org" target="_blank">SudokuWiki</a> or <a href="https://sudoku.com" target="_blank">Sudoku.com</a>.</p>
     </div>
 </div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, username, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // Redirect to the OTP verification page
+                window.location.href = `/register_otp?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+            } else {
+                // Handle error
+                alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
 
 {% endblock %}
