@@ -19,14 +19,45 @@
     color: red !important;
 }
 
-/* Add this to your CSS file */
-.blur {
-    filter: blur(5px);
-    pointer-events: none; /* Disable interactions */
+/* Make the container relative so the overlay can be positioned over it */
+#sudoku-container {
+    position: relative;
 }
 
-.pencil-mode {
-    color: gray; /* Change text color for pencil marks */
-    font-size: 0.8em; /* Smaller font size for pencil marks */
-    font-style: italic; /* Italicize pencil marks */
+/* Dim and disable interaction when paused */
+#sudoku-container.paused {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(80%);
+    transition: 0.3s ease;
 }
+
+/* Blur or hide the numbers */
+#sudoku-container.paused input.cell {
+    color: transparent !important;       /* Hide the text */
+    text-shadow: none !important;        /* Remove any possible shadows */
+    caret-color: transparent !important; /* Hide the blinking cursor */
+}
+
+/* Pause overlay styles */
+#pause-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: red;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 15px 30px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: none;
+    pointer-events: none;
+}
+
+/* Ensure the container holds space for the overlay */
+.container {
+    position: relative;
+}
+
