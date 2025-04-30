@@ -336,7 +336,7 @@ if (solveButton) {
                         cell.style.color = value !== 0 ? 'black' : ''; // Set color for filled numbers
                         if (value !== 0) {
                             cell.classList.add('solved');
-                            cell.readOnly = true; // Keep readonly for solved cells
+                            cell.readOnly = false; // Keep readonly for solved cells
                         } else {
                             cell.readOnly = false;
                             cell.classList.remove('solved');
@@ -411,15 +411,17 @@ function generateHomePuzzle(event) {
         event.preventDefault(); // Prevent form submission
     }
 
+    const difficulty = document.getElementById('difficulty-select').value; // Get selected difficulty
+
     const url = '/'; // Home page URL
-    const body = 'generate=1'; // Body for generating an easy puzzle
+    const body = `generate=1&difficulty=${difficulty}` // Include difficulty in the request body
 
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: body // Include the body for generating an easy puzzle
+        body: body // Include the body for generating puzzle
     })
     .then(response => {
         if (!response.ok) {
@@ -558,10 +560,15 @@ function exportPuzzle() {
     // Add popup to body
     document.body.appendChild(popup);
 
-    // Copy to clipboard
+    //copy to clipboard
     const input = popup.querySelector('input');
-    input.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(input.value)
+    .then(() => {
+        console.log('Copied to clipboard!');
+    })
+    .catch(err => {
+        console.error('Failed to copy: ', err);
+    });
 
     // Remove popup after 3 seconds
     setTimeout(() => {
