@@ -41,7 +41,7 @@ load_puzzles()  # Load puzzles at startup
 ### FLASK AND DATABASE SETUP
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
-app.permanent_session_lifetime = timedelta(minutes=30)
+app.permanent_session_lifetime = timedelta(hours=6)
 #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.sqlite3"
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
