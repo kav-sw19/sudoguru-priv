@@ -445,7 +445,6 @@ function generateHomePuzzle(event) {
             cell.style.color = value !== 0 ? 'black' : ''; // Set color to black for filled numbers
             
             // Set readonly for cells that are filled with the generated puzzle
-            cell.readOnly = value !== 0; // Make filled cells read-only
             cell.classList.remove('user-input'); // Remove user-input class
         });
 

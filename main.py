@@ -90,14 +90,7 @@ class users(db.Model):
 
 # push context manually to app
 with app.app_context():
-    db.drop_all()
     db.create_all()
-
-# For database checking    
-@app.route("/view")
-def view():
-    users_db = users.query.all()
-    return render_template("view.html", users_db=users_db) # displays all users info
 
 def login_required(f):
     @wraps(f)

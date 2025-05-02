@@ -3,6 +3,81 @@
 {% block title %}User Page - {{ user.username }}{% endblock %}
 
 {% block content %}
+<style>
+    .user-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+    }
+
+    .user-container h1 {
+        text-align: center;
+        color: #126cba;
+        margin-bottom: 30px;
+    }
+
+    .user-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-left: 6px solid #387ec4;
+        background-color: #f7f9fc;
+        border-radius: 5px;
+    }
+
+    .user-section h2 {
+        color: #387ec4;
+        margin-top: 0;
+    }
+
+    .user-section p, .user-section li {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .user-section ul {
+        padding-left: 20px;
+    }
+
+    .user-actions ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .user-actions li {
+        margin-bottom: 12px;
+    }
+
+    .user-actions a {
+        display: inline-block;
+        background-color: #387ec4;
+        color: white;
+        padding: 10px 16px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .user-actions a:hover {
+        background-color: #214b75;
+    }
+
+    
+    .delete-account {
+        background-color: #dc3545 !important;
+        margin-top: 10px;
+    }
+
+    .delete-account:hover {
+        background-color: #a71d2a !important;
+    }
+
+</style>
+
 <h1>Welcome, {{ user.username }}!</h1>
 
 <div class="user-info">
