@@ -135,7 +135,7 @@ body {
     padding: 10px 20px;
     font-size: 16px;
     color: #fff;
-    background-color: #28a745;
+    background-color: #387ec4;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -143,7 +143,7 @@ body {
 }
 
 .generate-button:hover {
-    background-color: #218838;
+    background-color: #214b75;
 }
 
 .error-messages {
